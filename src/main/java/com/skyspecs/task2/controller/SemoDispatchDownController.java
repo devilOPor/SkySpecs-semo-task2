@@ -21,4 +21,9 @@ public class SemoDispatchDownController {
     public ResponseEntity fetchAll(){
         return new ResponseEntity(semoDispatchDownService.fetchAll(), HttpStatus.OK);
     }
+
+    @GetMapping("/for30min")
+    public ResponseEntity fetchDispatchFor30Min(){
+        return new ResponseEntity<>(semoDispatchDownService.fetchDispatchFor30min(),HttpStatus.OK);
+    }
 }

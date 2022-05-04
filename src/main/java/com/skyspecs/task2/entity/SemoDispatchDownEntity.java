@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 )
 public class SemoDispatchDownEntity {
 
+    public static final String _STARTTIME = "timeStamp";
     @Id
     private Long id;
     @Column(name = "row_id")
@@ -66,4 +67,15 @@ public class SemoDispatchDownEntity {
                 ", endTime=" + endTime +
                 '}';
     }
+
+    public SemoDispatchDownEntity(Long id, Double qboa, Timestamp startTime, Timestamp endTime) {
+        this.id = id;
+        this.qboa = qboa;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public SemoDispatchDownEntity() {
+    }
 }
+

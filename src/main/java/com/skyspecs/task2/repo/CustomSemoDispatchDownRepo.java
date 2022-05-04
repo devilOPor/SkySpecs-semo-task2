@@ -1,6 +1,10 @@
 package com.skyspecs.task2.repo;
 
+import com.skyspecs.task2.entity.DispatchForInterval;
+
+import java.util.List;
+
 public interface CustomSemoDispatchDownRepo {
 
-    void electricityGenerated();
+    List<DispatchForInterval> electricityGenerated();
 }

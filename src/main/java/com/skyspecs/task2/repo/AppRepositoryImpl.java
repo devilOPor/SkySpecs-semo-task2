@@ -28,12 +28,9 @@ public class AppRepositoryImpl implements AppRepository {
             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
-
                 SemoDispatchDownEntity entity = new SemoDispatchDownEntity();
                 entity.setId(Long.parseLong(csvRecord.get("id")));
-//                entity.setStartTime(LocalDateTime.parse(csvRecord.get("start_time")));
                 entity.setStartTime(Timestamp.valueOf(csvRecord.get("start_time")));
-//                entity.setEndTime(LocalDateTime.parse(csvRecord.get("end_time")));
                 entity.setEndTime(Timestamp.valueOf(csvRecord.get("end_time")));
                 entity.setQboa(Double.parseDouble(csvRecord.get("qboa")));
                 list.add(entity);

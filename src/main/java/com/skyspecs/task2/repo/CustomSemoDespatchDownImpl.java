@@ -1,5 +1,6 @@
 package com.skyspecs.task2.repo;
 
+import com.skyspecs.task2.entity.DispatchForInterval;
 import com.skyspecs.task2.entity.SemoDispatchDownEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -7,11 +8,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 
 @Repository
 public class CustomSemoDespatchDownImpl implements CustomSemoDispatchDownRepo{
@@ -19,19 +18,35 @@ public class CustomSemoDespatchDownImpl implements CustomSemoDispatchDownRepo{
     @Autowired
     private EntityManager entityManager;
 
-    public void electricityGenerated(){
+    public List<DispatchForInterval> electricityGenerated(){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<SemoDispatchDownEntity> criteria = criteriaBuilder.createQuery(SemoDispatchDownEntity.class);
+        CriteriaQuery<Object[]> criteria = criteriaBuilder.createQuery(Object[].class);
         Root<SemoDispatchDownEntity> root = criteria.from(SemoDispatchDownEntity.class);
-        criteria.multiselect(root.get("startTime"),root.get("endTime"));
-//        List<Predicate> restrictions = new ArrayList<>();
-//        Expression<Long> expr = criteriaBuilder.count(root.get("startTime"));
-//
-//        restrictions.add(criteriaBuilder.greaterThan(expr, criteriaBuilder.countDistinct(root.get("startTime"))));
-//        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        TypedQuery query = entityManager.createQuery(criteria);
-        List<Object[]> result = query.getResultList();
-//        System.out.println(result);
+        criteria.multiselect(root.get("startTime"),root.get("endTime")
+                ,criteriaBuilder.avg(root.get("qboa")));
+        criteria.groupBy(root.get("startTime"),root.get("endTime"));
+        criteria.having(criteriaBuilder.greaterThan(criteriaBuilder.count(root.get("startTime")),
+                (criteriaBuilder.countDistinct(root.get("startTime")))));
+        criteria.orderBy(criteriaBuilder.asc(root.get("startTime")));
+        TypedQuery<Object[]> query = entityManager.createQuery(criteria);
+        List<Object[]> results = query.getResultList();
+        List<DispatchForInterval> dispatchList = new ArrayList<>();
+        double sum = 0;
+        for (int i = 0; i < results.size(); i=i+6) {
+            Timestamp startTime = (Timestamp) results.get(i)[0];
+            Timestamp endTime = null;
+            DispatchForInterval dispatchForInterval = new DispatchForInterval();
+            Double qboa = 0.0;
+            for(int j=0;j < 7 && j< results.size()-i;j++){
+                qboa = qboa+Double.parseDouble(results.get(i+j)[2].toString());
+                endTime = (Timestamp) results.get(i+j)[0];
+            }
+            dispatchForInterval.setAvgQboa(qboa);
+            dispatchForInterval.setEndTime(endTime);
+            dispatchForInterval.setStartTime(startTime);
+            dispatchList.add(dispatchForInterval);
+        }
+        return dispatchList;
     }
 }
 
