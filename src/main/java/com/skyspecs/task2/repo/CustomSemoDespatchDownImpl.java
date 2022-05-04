@@ -50,6 +50,3 @@ public class CustomSemoDespatchDownImpl implements CustomSemoDispatchDownRepo{
     }
 
 }
-
-
-//select start_time,end_time,avg(qboa) from semo_dispatch_down group by start_time ,end_time having count(start_time)>1 order by start_time;

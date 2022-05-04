@@ -1,12 +1,8 @@
 package com.skyspecs.task2.entity;
 
-
-
 import lombok.Data;
 import javax.persistence.*;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Data
 @Table(name = "\"SemoDispatchDown\"")
